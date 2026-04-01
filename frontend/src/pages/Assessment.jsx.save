@@ -1,0 +1,172 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+
+const STEPS = [
+  {
+    title: "About You",
+    fields: [
+      { key: 'Age',           label: 'Age',           type: 'number', placeholder: 'e.g. 25' },
+      { key: 'Gender',        label: 'Gender',        type: 'select', options: ['Male', 'Female', 'Other'] },
+      { key: 'self_employed', label: 'Self Employed?',type: 'select', options: ['Yes', 'No'] },
+      { key: 'family_history',label: 'Family history of mental illness?', type: 'select', options: ['Yes', 'No'] },
+    ]
+  },
+  {
+    title: "Work Environment",
+    fields: [
+      { key: 'no_employees',   label: 'Company Size',      type: 'select', options: ['1-5','6-25','26-100','100-500','500-1000','More than 1000'] },
+      { key: 'remote_work',    label: 'Remote Work?',       type: 'select', options: ['Yes', 'No'] },
+      { key: 'tech_company',   label: 'Tech Company?',      type: 'select', options: ['Yes', 'No'] },
+      { key: 'work_interfere', label: 'Does mental health interfere with work?', type: 'select', options: ['Never','Rarely','Sometimes','Often'] },
+    ]
+  },
+  {
+    title: "Workplace Support",
+    fields: [
+      { key: 'benefits',          label: 'Mental health benefits provided?',    type: 'select', options: ['Yes', 'No', "Don't know"] },
+      { key: 'care_options',      label: 'Aware of care options at work?',       type: 'select', options: ['Yes', 'No', 'Not sure'] },
+      { key: 'wellness_program',  label: 'Wellness program at work?',            type: 'select', options: ['Yes', 'No', "Don't know"] },
+      { key: 'seek_help',         label: 'Resources to seek help provided?',     type: 'select', options: ['Yes', 'No', "Don't know"] },
+    ]
+  },
+  {
+    title: "Workplace Culture",
+    fields: [
+      { key: 'anonymity',                  label: 'Anonymity protected if you seek help?', type: 'select', options: ['Yes', 'No', "Don't know"] },
+      { key: 'leave',                      label: 'Ease of taking mental health leave?',   type: 'select', options: ["Very easy","Somewhat easy","Somewhat difficult","Very difficult","Don't know"] },
+      { key: 'mental_health_consequence',  label: 'Fear of mental health consequences at work?', type: 'select', options: ['Yes', 'No', 'Maybe'] },
+      { key: 'phys_health_consequence',    label: 'Fear of physical health consequences?', type: 'select', options: ['Yes', 'No', 'Maybe'] },
+    ]
+  },
+  {
+    title: "Social & Disclosure",
+    fields: [
+      { key: 'coworkers',              label: 'Comfortable discussing with coworkers?',  type: 'select', options: ['Yes', 'No', 'Some of them'] },
+      { key: 'supervisor',             label: 'Comfortable discussing with supervisor?', type: 'select', options: ['Yes', 'No', 'Some of them'] },
+      { key: 'mental_health_interview',label: 'Would mention mental health in interview?', type: 'select', options: ['Yes', 'No', 'Maybe'] },
+      { key: 'phys_health_interview',  label: 'Would mention physical health in interview?', type: 'select', options: ['Yes', 'No', 'Maybe'] },
+      { key: 'mental_vs_physical',     label: 'Is mental health taken as seriously as physical?', type: 'select', options: ['Yes', 'No', "Don't know"] },
+      { key: 'obs_consequence',        label: 'Observed negative consequences for others?', type: 'select', options: ['Yes', 'No'] },
+    ]
+  }
+]
+
+export default function Assessment() {
+  const navigate = useNavigate()
+  const [step, setStep]     = useState(0)
+  const [form, setForm]     = useState({})
+  const [loading, setLoading] = useState(false)
+  const [error, setError]   = useState('')
+
+  const current = STEPS[step]
+  const progress = ((step) / STEPS.length) * 100
+
+  const handleChange = (key, val) => setForm(f => ({ ...f, [key]: val }))
+
+  const isStepComplete = () =>
+    current.fields.every(f => form[f.key] !== undefined && form[f.key] !== '')
+
+  const handleNext = () => {
+    if (step < STEPS.length - 1) setStep(s => s + 1)
+    else handleSubmit()
+  }
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await axios.post('http://127.0.0.1:8001/api/predict/', form)
+      navigate('/result', { state: { result: res.data, form } })
+    } catch (e) {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="gradient-bg" style={{ minHeight: '100vh', padding: '40px 0' }}>
+      <div className="container">
+
+        {/* Header */}
+        <div style={{ marginBottom: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+            <span style={{ fontSize: 24 }}>🧠</span>
+            <span style={{ fontFamily: 'DM Serif Display', fontSize: 22 }}>MindCheck</span>
+          </div>
+
+          {/* Progress */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+            <span style={{ fontSize: 13, color: 'var(--muted)' }}>Step {step + 1} of {STEPS.length}</span>
+            <span style={{ fontSize: 13, color: 'var(--accent)' }}>{Math.round(((step+1)/STEPS.length)*100)}%</span>
+          </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{
+              width: `${((step+1)/STEPS.length)*100}%`,
+              background: 'linear-gradient(90deg, var(--accent), var(--accent2))'
+            }} />
+          </div>
+        </div>
+
+        {/* Card */}
+        <div className="card fade-up" key={step}>
+          <h2 style={{ fontSize: 28, marginBottom: 8 }}>{current.title}</h2>
+          <p style={{ color: 'var(--muted)', marginBottom: 28, fontSize: 14 }}>
+            Please answer all questions honestly for accurate results.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            {current.fields.map(field => (
+              <div key={field.key}>
+                <label style={{ display: 'block', marginBottom: 8, fontSize: 13, color: 'var(--muted)', fontWeight: 500 }}>
+                  {field.label}
+                </label>
+                {field.type === 'select' ? (
+                  <select value={form[field.key] || ''} onChange={e => handleChange(field.key, e.target.value)}>
+                    <option value="">Select...</option>
+                    {field.options.map(o => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                ) : (
+                  <input
+                    type={field.type}
+                    placeholder={field.placeholder}
+                    value={form[field.key] || ''}
+                    onChange={e => handleChange(field.key, e.target.value)}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {error && (
+            <p style={{ color: 'var(--red)', marginTop: 16, fontSize: 14 }}>{error}</p>
+          )}
+
+          {/* Navigation */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32, alignItems: 'center' }}>
+            <button className="btn-outline"
+              onClick={() => setStep(s => s - 1)}
+              style={{ visibility: step === 0 ? 'hidden' : 'visible' }}>
+              ← Back
+            </button>
+
+            <div style={{ display: 'flex', gap: 6 }}>
+              {STEPS.map((_, i) => (
+                <div key={i} className={`step-dot ${i <= step ? 'active' : ''}`} />
+              ))}
+            </div>
+
+            <button className="btn-primary"
+              onClick={handleNext}
+              disabled={!isStepComplete() || loading}>
+              {loading ? 'Analyzing...' : step === STEPS.length - 1 ? 'Get Results 🧠' : 'Next →'}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
