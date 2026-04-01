@@ -79,7 +79,24 @@ CORS_ALLOW_ALL_ORIGINS = True
 # ─────────────────────────────────────────
 # MongoDB Config
 # ─────────────────────────────────────────
-MONGO_URI = env('MONGO_URI', default="mongodb+srv://mindcheck:mindcheck123@cluster0.p8dqj5r.mongodb.net/mindcheck?retryWrites=true&w=majority&appName=Cluster0").strip().replace('"', '').replace("'", "")
+import urllib.parse
+
+def get_sanitized_uri(raw_uri):
+    if not raw_uri: return None
+    raw_uri = raw_uri.strip().replace('"', '').replace("'", "")
+    if '://' in raw_uri and '@' in raw_uri:
+        try:
+            prefix, rest = raw_uri.split('://', 1)
+            creds, host = rest.rsplit('@', 1)
+            if ':' in creds:
+                user, pwd = creds.split(':', 1)
+                # Escaping special characters in password
+                return f"{prefix}://{user}:{urllib.parse.quote_plus(pwd)}@{host}"
+        except:
+            pass
+    return raw_uri
+
+MONGO_URI = get_sanitized_uri(env('MONGO_URI', default="mongodb+srv://mindcheck:mindcheck123@cluster0.p8dqj5r.mongodb.net/mindcheck?retryWrites=true&w=majority&appName=Cluster0"))
 MONGO_DB  = env('MONGO_DB', default="mindcheck").strip()
 
 # ─────────────────────────────────────────
