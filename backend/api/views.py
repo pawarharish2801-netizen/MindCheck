@@ -40,11 +40,14 @@ print("✅ All ML models loaded successfully")
 # ─────────────────────────────────────────
 try:
     client     = MongoClient(settings.MONGO_URI, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000)
+    # Definitive startup diagnostic to confirm connection
+    client.admin.command('ping') 
+    print("✅✅ MongoDB Connected Successfully")
     db         = client[settings.MONGO_DB]
     collection = db["assessments"]
     chat_collection = db["chat_sessions_v2"] 
 except Exception as e:
-    print(f"MongoDB Initial Connection Warning: {e}")
+    print(f"❌❌ MongoDB Connection FAILED: {e}")
     client = None
 
 # ─────────────────────────────────────────

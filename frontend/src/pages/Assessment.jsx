@@ -116,6 +116,7 @@ const GENERAL_STEPS = [
       { key: 'Work_Interest', label: 'Have you lost interest in your work, hobbies, or daily activities?', type: 'select', options: ['Yes', 'No'] },
       { key: 'mental_health_interview', label: 'Would you feel safe discussing mental health in a formal job interview?', type: 'select', options: ['Yes', 'No', 'Maybe'] },
       { key: 'care_options', label: 'Do you know what local or employer care options are available to you?', type: 'select', options: ['Yes', 'No', 'Not sure'] },
+      { key: 'Social_Weakness', label: 'Have you been feeling socially distant or unusually weak lately?', type: 'select', options: ['Yes', 'No'] },
     ]
   }
 ];
