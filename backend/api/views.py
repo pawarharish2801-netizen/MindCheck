@@ -43,16 +43,38 @@ db = None
 collection = None
 chat_collection = None
 
-try:
-    client     = MongoClient(settings.MONGO_URI, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000)
-    # Definitive startup diagnostic to confirm connection
-    client.admin.command('ping') 
-    print("✅✅ MongoDB Connected Successfully")
-    db         = client[settings.MONGO_DB]
-    collection = db["assessments"]
-    chat_collection = db["chat_sessions_v2"] 
-except Exception as e:
-    print(f"❌❌ MongoDB Connection FAILED: {e}")
+
+def init_mongo_connection():
+    global client, db, collection, chat_collection
+    try:
+        client = MongoClient(
+            settings.MONGO_URI,
+            serverSelectionTimeoutMS=5000,
+            connectTimeoutMS=5000
+        )
+        client.admin.command('ping')
+        db = client[settings.MONGO_DB]
+        collection = db["assessments"]
+        chat_collection = db["chat_sessions_v2"]
+        print("✅✅ MongoDB Connected Successfully")
+    except Exception as e:
+        client = None
+        db = None
+        collection = None
+        chat_collection = None
+        print(f"❌❌ MongoDB Connection FAILED: {e}")
+
+
+def ensure_mongo_collections():
+    """
+    Lazily reconnect if startup connection failed or dropped.
+    """
+    if collection is None or chat_collection is None:
+        init_mongo_connection()
+    return collection, chat_collection
+
+
+init_mongo_connection()
 
 # ─────────────────────────────────────────
 # RISK TIER HELPER
@@ -115,15 +137,26 @@ def predict(request):
         user_uid   = data.pop('user_uid', 'anonymous')
 
         try:
+            assessment_collection, _ = ensure_mongo_collections()
+            if assessment_collection is None:
+                return Response(
+                    {"error": "Database connection unavailable. Could not save assessment."},
+                    status=503
+                )
+
             record = {
                 "user_uid": user_uid, "user_email": user_email, "user_name": user_name,
                 "responses": data, "assessment_type": assessment_type,
                 "risk_score": risk_score, "risk_tier": risk_tier, "referral": referral,
                 "timestamp": datetime.utcnow().isoformat()
             }
-            if collection: collection.insert_one(record)
+            assessment_collection.insert_one(record)
         except Exception as mongo_err:
             print("MongoDB Persistence Error:", mongo_err)
+            return Response(
+                {"error": "Prediction generated but failed to save assessment."},
+                status=500
+            )
 
         return Response({
             "risk_score": risk_score, "risk_tier": risk_tier, "referral": referral,
@@ -150,12 +183,14 @@ def chat_stream(request):
 
         # Robust Database Lookups (Safe Mode)
         try:
-            if chat_collection is not None:
-                session = chat_collection.find_one({"user_uid": user_uid})
+            _, mongo_chat_collection = ensure_mongo_collections()
+            if mongo_chat_collection is not None:
+                session = mongo_chat_collection.find_one({"user_uid": user_uid})
                 if session: messages = session.get('messages', [])
             
-            if collection is not None:
-                latest = collection.find_one({"user_uid": user_uid}, sort=[("timestamp", -1)])
+            mongo_assessment_collection, _ = ensure_mongo_collections()
+            if mongo_assessment_collection is not None:
+                latest = mongo_assessment_collection.find_one({"user_uid": user_uid}, sort=[("timestamp", -1)])
                 if latest:
                     context = f"User recently scored {latest['risk_score']}% ({latest['risk_tier']}) in a {latest['assessment_type']} assessment."
         except Exception as mongo_err:
@@ -172,9 +207,10 @@ def chat_stream(request):
             
             # Robust Persistence Fallback
             try:
-                if chat_collection is not None:
+                _, mongo_chat_collection = ensure_mongo_collections()
+                if mongo_chat_collection is not None:
                     messages.append({"role": "model", "content": full_response})
-                    chat_collection.update_one(
+                    mongo_chat_collection.update_one(
                         {"user_uid": user_uid},
                         {"$set": {"messages": messages, "last_updated": datetime.utcnow().isoformat()}},
                         upsert=True
@@ -201,11 +237,12 @@ def chat_endpoint(request):
         context = f"User Location: {location}. "
 
         try:
-            if chat_collection is not None:
-                session = chat_collection.find_one({"user_uid": user_uid})
+            mongo_assessment_collection, mongo_chat_collection = ensure_mongo_collections()
+            if mongo_chat_collection is not None:
+                session = mongo_chat_collection.find_one({"user_uid": user_uid})
                 if session: messages = session.get('messages', [])
-            if collection is not None:
-                latest = collection.find_one({"user_uid": user_uid}, sort=[("timestamp", -1)])
+            if mongo_assessment_collection is not None:
+                latest = mongo_assessment_collection.find_one({"user_uid": user_uid}, sort=[("timestamp", -1)])
                 if latest:
                     context = f"User recently scored {latest['risk_score']}% ({latest['risk_tier']}) in a {latest['assessment_type']} assessment."
         except: pass
@@ -215,8 +252,9 @@ def chat_endpoint(request):
         messages.append({"role": "model", "content": ai_response})
         
         try:
-            if chat_collection is not None:
-                chat_collection.update_one(
+            _, mongo_chat_collection = ensure_mongo_collections()
+            if mongo_chat_collection is not None:
+                mongo_chat_collection.update_one(
                     {"user_uid": user_uid},
                     {"$set": {"messages": messages, "last_updated": datetime.utcnow().isoformat()}},
                     upsert=True
@@ -236,8 +274,9 @@ def get_chat_history(request):
         if not user_uid: return Response({"error": "user_uid is required"}, status=400)
         messages = []
         try:
-            if chat_collection is not None:
-                session = chat_collection.find_one({"user_uid": user_uid}, {'_id': 0})
+            _, mongo_chat_collection = ensure_mongo_collections()
+            if mongo_chat_collection is not None:
+                session = mongo_chat_collection.find_one({"user_uid": user_uid}, {'_id': 0})
                 if session: messages = session.get('messages', [])
         except: pass
         return Response(messages, status=200)
@@ -249,7 +288,9 @@ def get_history(request):
     try:
         records = []
         try:
-            if collection is not None: records = list(collection.find({}, {'_id': 0}).sort("timestamp", -1).limit(10))
+            mongo_assessment_collection, _ = ensure_mongo_collections()
+            if mongo_assessment_collection is not None:
+                records = list(mongo_assessment_collection.find({}, {'_id': 0}).sort("timestamp", -1).limit(10))
         except: pass
         return Response(records, status=200)
     except Exception as e:
@@ -262,7 +303,9 @@ def get_user_history(request):
         if not user_uid: return Response({"error": "user_uid is required"}, status=400)
         records = []
         try:
-            if collection is not None: records = list(collection.find({"user_uid": user_uid}, {'_id': 0}).sort("timestamp", -1))
+            mongo_assessment_collection, _ = ensure_mongo_collections()
+            if mongo_assessment_collection is not None:
+                records = list(mongo_assessment_collection.find({"user_uid": user_uid}, {'_id': 0}).sort("timestamp", -1))
         except: pass
         return Response(records, status=200)
     except Exception as e:
@@ -275,8 +318,9 @@ def clear_chat(request):
         if not user_uid: return Response({"error": "user_uid is required"}, status=400)
         
         try:
-            if chat_collection is not None:
-                chat_collection.delete_one({"user_uid": user_uid})
+            _, mongo_chat_collection = ensure_mongo_collections()
+            if mongo_chat_collection is not None:
+                mongo_chat_collection.delete_one({"user_uid": user_uid})
         except Exception as mongo_err:
             print("MongoDB Clear Error:", mongo_err)
             return Response({"error": "Database error while clearing history"}, status=500)
