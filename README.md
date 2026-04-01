@@ -75,11 +75,3 @@ MONGO_DB=mindcheck
 ```
 
 Create a `firebase.js` in `frontend/src/` with your Firebase config.
-
----
-
-## 📄 License
-This project was developed for the **MindCheck Hackathon 2026**. All diagnostic logic is intent-based and should not replace professional medical advice.
-
----
-**Developed with 🌸 and AI for a healthier mind.**
