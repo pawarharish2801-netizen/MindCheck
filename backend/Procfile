@@ -1,1 +1,1 @@
-web: gunicorn mindcheck_backend.wsgi:application
+web: gunicorn --workers 1 --threads 8 --timeout 120 mindcheck_backend.wsgi:application

@@ -79,8 +79,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 # ─────────────────────────────────────────
 # MongoDB Config
 # ─────────────────────────────────────────
-MONGO_URI = env('MONGO_URI', default="mongodb+srv://mindcheck:mindcheck123@cluster0.p8dqj5r.mongodb.net/mindcheck?retryWrites=true&w=majority&appName=Cluster0")
-MONGO_DB  = env('MONGO_DB', default="mindcheck")
+MONGO_URI = env('MONGO_URI', default="mongodb+srv://mindcheck:mindcheck123@cluster0.p8dqj5r.mongodb.net/mindcheck?retryWrites=true&w=majority&appName=Cluster0").strip().replace('"', '').replace("'", "")
+MONGO_DB  = env('MONGO_DB', default="mindcheck").strip()
 
 # ─────────────────────────────────────────
 # Google AI Studio / Gemini
