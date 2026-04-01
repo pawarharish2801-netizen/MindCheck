@@ -13,7 +13,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await axios.get(`http://localhost:8013/api/user-history/?user_uid=${currentUser.uid}`);
+        const response = await axios.get(`http://127.0.0.1:8013/api/user-history/?user_uid=${currentUser.uid}`);
         setHistory(response.data);
       } catch (err) {
         console.error("Failed to fetch history:", err);

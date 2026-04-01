@@ -43,6 +43,7 @@ try:
     db         = client[settings.MONGO_DB]
     collection = db["assessments"]
     chat_collection = db["chat_sessions_v2"] 
+    print(f"✅ Connected to MongoDB: {settings.MONGO_DB} (Collections: assessments, chat_sessions_v2)")
 except Exception as e:
     print(f"MongoDB Initial Connection Warning: {e}")
     client = None
@@ -114,7 +115,12 @@ def predict(request):
                 "risk_score": risk_score, "risk_tier": risk_tier, "referral": referral,
                 "timestamp": datetime.utcnow().isoformat()
             }
-            if collection: collection.insert_one(record)
+            print(f"DEBUG: Attempting to save assessment for UID: {user_uid}")
+            if collection is not None: 
+                result = collection.insert_one(record)
+                print(f"DEBUG: Successfully saved. Inserted ID: {result.inserted_id}")
+            else:
+                print("DEBUG: ERROR - 'collection' is None. Record not saved.")
         except Exception as mongo_err:
             print("MongoDB Persistence Error:", mongo_err)
 
