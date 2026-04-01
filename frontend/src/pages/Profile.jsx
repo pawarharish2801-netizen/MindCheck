@@ -13,7 +13,8 @@ export default function Profile() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/user-history/?user_uid=${currentUser.uid}`);
+        const API_URL = import.meta.env.VITE_API_URL || "https://mindcheck-backend-fpeb.onrender.com";
+        const response = await axios.get(`${API_URL}/api/user-history/?user_uid=${currentUser.uid}`);
         setHistory(response.data);
       } catch (err) {
         console.error("Failed to fetch history:", err);

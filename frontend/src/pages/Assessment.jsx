@@ -168,7 +168,8 @@ export default function Assessment() {
         user_name: currentUser?.displayName || 'anonymous',
         user_uid: currentUser?.uid || 'anonymous'
       }
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/predict/`, payload)
+      const API_URL = import.meta.env.VITE_API_URL || "https://mindcheck-backend-fpeb.onrender.com";
+      const res = await axios.post(`${API_URL}/api/predict/`, payload)
       navigate('/result', { state: { result: res.data, form: payload } })
     } catch (err) {
       console.error("Submission Error Details:", err.response?.data || err.message);
