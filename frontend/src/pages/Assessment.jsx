@@ -17,13 +17,17 @@ const STUDENT_STEPS = [
   {
     title: "Academic Life",
     fields: [
-      { key: 'Academic Pressure', label: 'How much academic pressure do you feel?', type: 'select', options: [
-        {value: '1', label: '1 - Very Low'}, {value: '2', label: '2 - Low'}, {value: '3', label: '3 - Moderate'}, {value: '4', label: '4 - High'}, {value: '5', label: '5 - Severe'}
-      ] },
+      {
+        key: 'Academic Pressure', label: 'How much academic pressure do you feel?', type: 'select', options: [
+          { value: '1', label: '1 - Very Low' }, { value: '2', label: '2 - Low' }, { value: '3', label: '3 - Moderate' }, { value: '4', label: '4 - High' }, { value: '5', label: '5 - Severe' }
+        ]
+      },
       { key: 'CGPA', label: 'What is your current CGPA (out of 10)?', type: 'number', placeholder: 'e.g. 7.5' },
-      { key: 'Study Satisfaction', label: 'Are you satisfied with your academic performance?', type: 'select', options: [
-        {value: '1', label: '1 - Highly Dissatisfied'}, {value: '2', label: '2 - Dissatisfied'}, {value: '3', label: '3 - Neutral'}, {value: '4', label: '4 - Satisfied'}, {value: '5', label: '5 - Highly Satisfied'}
-      ] },
+      {
+        key: 'Study Satisfaction', label: 'Are you satisfied with your academic performance?', type: 'select', options: [
+          { value: '1', label: '1 - Highly Dissatisfied' }, { value: '2', label: '2 - Dissatisfied' }, { value: '3', label: '3 - Neutral' }, { value: '4', label: '4 - Satisfied' }, { value: '5', label: '5 - Highly Satisfied' }
+        ]
+      },
       { key: 'Work/Study Hours', label: 'How many hours do you actively study or work each day?', type: 'number', placeholder: 'e.g. 6' },
     ]
   },
@@ -32,9 +36,11 @@ const STUDENT_STEPS = [
     fields: [
       { key: 'Sleep Duration', label: 'How many hours do you usually sleep at night?', type: 'select', options: ['Less than 5 hours', '5-6 hours', '6-7 hours', '7-8 hours', 'More than 8 hours'] },
       { key: 'Dietary Habits', label: 'How would you describe your daily eating habits?', type: 'select', options: ['Healthy', 'Moderate', 'Unhealthy'] },
-      { key: 'Financial Stress', label: 'How stressed are you about your personal finances?', type: 'select', options: [
-        {value: '1', label: '1 - Very Low (Secure)'}, {value: '2', label: '2 - Low'}, {value: '3', label: '3 - Moderate'}, {value: '4', label: '4 - High'}, {value: '5', label: '5 - Severe (Struggling)'}
-      ] },
+      {
+        key: 'Financial Stress', label: 'How stressed are you about your personal finances?', type: 'select', options: [
+          { value: '1', label: '1 - Very Low (Secure)' }, { value: '2', label: '2 - Low' }, { value: '3', label: '3 - Moderate' }, { value: '4', label: '4 - High' }, { value: '5', label: '5 - Severe (Struggling)' }
+        ]
+      },
       { key: 'Family History of Mental Illness', label: 'Is there a history of mental health conditions in your family?', type: 'select', options: ['Yes', 'No'] },
     ]
   },
@@ -42,12 +48,16 @@ const STUDENT_STEPS = [
     title: "Mental Wellbeing",
     fields: [
       { key: 'Have you ever had suicidal thoughts ?', label: 'Have you ever experienced suicidal thoughts?', type: 'select', options: ['Yes', 'No'] },
-      { key: 'Work Pressure', label: 'How much pressure do you feel at your job? (If applicable)', type: 'select', options: [
-        {value: '0', label: '0 - Not Applicable'}, {value: '1', label: '1 - Very Low'}, {value: '2', label: '2 - Low'}, {value: '3', label: '3 - Moderate'}, {value: '4', label: '4 - High'}, {value: '5', label: '5 - Severe'}
-      ] },
-      { key: 'Job Satisfaction', label: 'Are you satisfied with your current job? (If applicable)', type: 'select', options: [
-        {value: '0', label: '0 - Not Applicable'}, {value: '1', label: '1 - Highly Dissatisfied'}, {value: '2', label: '2 - Dissatisfied'}, {value: '3', label: '3 - Neutral'}, {value: '4', label: '4 - Satisfied'}, {value: '5', label: '5 - Highly Satisfied'}
-      ] },
+      {
+        key: 'Work Pressure', label: 'How much pressure do you feel at your job? (If applicable)', type: 'select', options: [
+          { value: '0', label: '0 - Not Applicable' }, { value: '1', label: '1 - Very Low' }, { value: '2', label: '2 - Low' }, { value: '3', label: '3 - Moderate' }, { value: '4', label: '4 - High' }, { value: '5', label: '5 - Severe' }
+        ]
+      },
+      {
+        key: 'Job Satisfaction', label: 'Are you satisfied with your current job? (If applicable)', type: 'select', options: [
+          { value: '0', label: '0 - Not Applicable' }, { value: '1', label: '1 - Highly Dissatisfied' }, { value: '2', label: '2 - Dissatisfied' }, { value: '3', label: '3 - Neutral' }, { value: '4', label: '4 - Satisfied' }, { value: '5', label: '5 - Highly Satisfied' }
+        ]
+      },
     ]
   }
 ];
@@ -58,7 +68,7 @@ const CORPORATE_STEPS = [
     title: "About Your Role (Risk Factors)",
     fields: [
       { key: 'family_history', label: 'Does anyone in your family have a history of mental health conditions?', type: 'select', options: ['Yes', 'No'] },
-      { key: 'work_interfere', label: 'Do you ever feel like your mental health affects your focus or performance at work?', type: 'select', options: ['Never','Rarely','Sometimes','Often'] },
+      { key: 'work_interfere', label: 'Do you ever feel like your mental health affects your focus or performance at work?', type: 'select', options: ['Never', 'Rarely', 'Sometimes', 'Often'] },
       { key: 'tech_company', label: 'Is your primary employer a tech company?', type: 'select', options: ['Yes', 'No'] },
       { key: 'benefits', label: 'Does your company provide specific mental health benefits or insurance?', type: 'select', options: ['Yes', 'No', "Don't know"] },
     ]
@@ -75,7 +85,7 @@ const CORPORATE_STEPS = [
   {
     title: "Workplace Culture & Safety",
     fields: [
-      { key: 'leave', label: 'How easy is it for you to request medical leave for a mental health condition?', type: 'select', options: ["Very easy","Somewhat easy","Somewhat difficult","Very difficult","Don't know"] },
+      { key: 'leave', label: 'How easy is it for you to request medical leave for a mental health condition?', type: 'select', options: ["Very easy", "Somewhat easy", "Somewhat difficult", "Very difficult", "Don't know"] },
       { key: 'coworkers', label: 'Would you feel comfortable discussing a personal mental health issue with your coworkers?', type: 'select', options: ['Yes', 'No', 'Some of them'] },
       { key: 'mental_health_interview', label: 'Would you bring up a mental health issue with a potential employer in a job interview?', type: 'select', options: ['Yes', 'No', 'Maybe'] },
       { key: 'phys_health_interview', label: 'Would you bring up a physical health issue with a potential employer in a job interview?', type: 'select', options: ['Yes', 'No', 'Maybe'] },
@@ -111,25 +121,25 @@ const GENERAL_STEPS = [
 ];
 
 export default function Assessment() {
-  const navigate   = useNavigate()
+  const navigate = useNavigate()
   const { currentUser } = useAuth()
-  const [step, setStep]       = useState(0)
-  const [form, setForm]       = useState({})
+  const [step, setStep] = useState(0)
+  const [form, setForm] = useState({})
   const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
+  const [error, setError] = useState('')
 
   // Determine which steps to show based on profile
-  let activeSteps    = [TRIAGE_STEP];
+  let activeSteps = [TRIAGE_STEP];
   let assessmentType = 'corporate';
 
   if (form.Profile === 'Student') {
-    activeSteps    = [...activeSteps, ...STUDENT_STEPS];
+    activeSteps = [...activeSteps, ...STUDENT_STEPS];
     assessmentType = 'student';
   } else if (form.Profile === 'Other / General') {
-    activeSteps    = [...activeSteps, ...GENERAL_STEPS];
+    activeSteps = [...activeSteps, ...GENERAL_STEPS];
     assessmentType = 'general';
   } else if (form.Profile === 'Working Professional') {
-    activeSteps    = [...activeSteps, ...CORPORATE_STEPS];
+    activeSteps = [...activeSteps, ...CORPORATE_STEPS];
     assessmentType = 'corporate';
   }
 
@@ -150,16 +160,17 @@ export default function Assessment() {
     setError('')
     try {
       // Lowercase text fields that need it for the model encoders
-      const payload = { 
-        ...form, 
+      const payload = {
+        ...form,
         assessment_type: assessmentType,
         user_email: currentUser?.email || 'anonymous',
         user_name: currentUser?.displayName || 'anonymous',
         user_uid: currentUser?.uid || 'anonymous'
       }
-      const res = await axios.post('http://127.0.0.1:8013/api/predict/', payload)
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/predict/`, payload)
       navigate('/result', { state: { result: res.data, form: payload } })
-    } catch {
+    } catch (err) {
+      console.error("Submission Error Details:", err.response?.data || err.message);
       setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
@@ -178,11 +189,11 @@ export default function Assessment() {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, alignItems: 'flex-end' }}>
             <span style={{ fontSize: 14, color: 'var(--muted)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>Step {step + 1} of {activeSteps.length}</span>
-            <span className="heading-font" style={{ fontSize: 20, color: 'var(--text)', fontWeight: 700 }}>{Math.round(((step+1)/activeSteps.length)*100)}%</span>
+            <span className="heading-font" style={{ fontSize: 20, color: 'var(--text)', fontWeight: 700 }}>{Math.round(((step + 1) / activeSteps.length) * 100)}%</span>
           </div>
           <div className="progress-bar">
             <div className="progress-fill" style={{
-              width: `${((step+1)/activeSteps.length)*100}%`,
+              width: `${((step + 1) / activeSteps.length) * 100}%`,
               background: 'linear-gradient(90deg, #a7bfff, #ffaecd)'
             }} />
           </div>
@@ -246,12 +257,12 @@ export default function Assessment() {
               onClick={handleNext}
               disabled={!isStepComplete() || loading}
               style={{ minWidth: 140 }}>
-                  {loading ? (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                       <svg style={{ animation: 'spin 1s linear infinite', height: 16, width: 16 }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                       Analyzing...
-                    </span>
-                  ) : step === activeSteps.length - 1 ? 'Get Results' : 'Continue →'}
+              {loading ? (
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <svg style={{ animation: 'spin 1s linear infinite', height: 16, width: 16 }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  Analyzing...
+                </span>
+              ) : step === activeSteps.length - 1 ? 'Get Results' : 'Continue →'}
             </button>
           </div>
         </div>

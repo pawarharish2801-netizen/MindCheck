@@ -38,7 +38,7 @@ export default function SupportChat() {
     if (isOpen && currentUser) {
       const fetchHistory = async () => {
         try {
-          const res = await axios.get(`http://localhost:8013/api/chat-history/?user_uid=${currentUser.uid}`);
+          const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/chat-history/?user_uid=${currentUser.uid}`);
           if (res.data && res.data.length > 0) {
             setMessages(res.data);
           }
@@ -59,7 +59,7 @@ export default function SupportChat() {
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
-    
+
     const userMsg = input;
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
@@ -68,8 +68,8 @@ export default function SupportChat() {
 
     try {
       setMessages(prev => [...prev, { role: 'model', content: '' }]);
-      
-      const response = await fetch('http://localhost:8013/api/chat-stream/', {
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat-stream/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -89,10 +89,10 @@ export default function SupportChat() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        
+
         const chunk = decoder.decode(value, { stream: true });
         aiContent += chunk;
-        
+
         setMessages(prev => {
           const newMessages = [...prev];
           newMessages[newMessages.length - 1].content = aiContent;
@@ -113,9 +113,9 @@ export default function SupportChat() {
 
   const handleClear = async () => {
     if (!currentUser || !window.confirm("Start a fresh conversation? This will clear our history.")) return;
-    
+
     try {
-      await axios.delete(`http://localhost:8013/api/clear-chat/?user_uid=${currentUser.uid}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/clear-chat/?user_uid=${currentUser.uid}`);
       setMessages([{ role: 'model', content: "Fresh start! What's on your mind now?" }]);
     } catch (err) {
       console.error("Clear failed:", err);
@@ -125,7 +125,7 @@ export default function SupportChat() {
   return (
     <>
       {!isOpen && (
-        <button 
+        <button
           onClick={() => setIsOpen(true)}
           className="chat-fab"
           style={{
@@ -147,10 +147,10 @@ export default function SupportChat() {
         <div className="chat-window" style={{
           position: 'fixed', bottom: 40, right: 40,
           width: 420, height: 600,
-          background: 'rgba(255, 255, 255, 0.7)', 
+          background: 'rgba(255, 255, 255, 0.7)',
           backdropFilter: 'blur(30px) saturate(180%)',
           WebkitBackdropFilter: 'blur(30px) saturate(180%)',
-          border: '1px solid rgba(255, 255, 255, 0.4)', 
+          border: '1px solid rgba(255, 255, 255, 0.4)',
           borderRadius: 40,
           boxShadow: '0 30px 60px rgba(0,0,0,0.12)',
           zIndex: 1000, display: 'flex', flexDirection: 'column',
@@ -158,14 +158,14 @@ export default function SupportChat() {
         }}>
           {/* Header */}
           <div style={{
-            padding: '30px 25px', 
+            padding: '30px 25px',
             background: 'rgba(255,255,255,0.3)',
             borderBottom: '1px solid rgba(0,0,0,0.05)',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <div style={{ 
-                width: 50, height: 50, borderRadius: '18px', 
+              <div style={{
+                width: 50, height: 50, borderRadius: '18px',
                 background: 'linear-gradient(135deg, #a7bfff, #ffaecd)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 24, boxShadow: '0 8px 20px rgba(167, 191, 255, 0.3)'
@@ -179,23 +179,23 @@ export default function SupportChat() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button 
+              <button
                 onClick={handleClear}
                 title="Clear Conversation"
-                style={{ 
-                  background: 'rgba(0,0,0,0.03)', borderRadius: '50%', width: 36, height: 36, 
-                  display: 'flex', alignItems:'center', justifyContent: 'center', border: 'none', 
-                  color: '#666', fontSize: 14, cursor: 'pointer', transition: '0.3s' 
+                style={{
+                  background: 'rgba(0,0,0,0.03)', borderRadius: '50%', width: 36, height: 36,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none',
+                  color: '#666', fontSize: 14, cursor: 'pointer', transition: '0.3s'
                 }}
               >
                 🗑️
               </button>
-              <button 
+              <button
                 onClick={() => setIsOpen(false)}
-                style={{ 
-                  background: 'rgba(0,0,0,0.03)', borderRadius: '50%', width: 36, height: 36, 
-                  display: 'flex', alignItems:'center', justifyContent: 'center', border: 'none', 
-                  color: '#666', fontSize: 16, cursor: 'pointer', transition: '0.3s' 
+                style={{
+                  background: 'rgba(0,0,0,0.03)', borderRadius: '50%', width: 36, height: 36,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none',
+                  color: '#666', fontSize: 16, cursor: 'pointer', transition: '0.3s'
                 }}
               >
                 ✕
@@ -203,7 +203,7 @@ export default function SupportChat() {
             </div>
           </div>
 
-          <div 
+          <div
             ref={scrollRef}
             style={{ flex: 1, padding: '25px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 20 }}
           >
@@ -240,26 +240,26 @@ export default function SupportChat() {
 
           <div style={{ padding: '30px 25px', background: 'rgba(255,255,255,0.3)', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
             <div style={{ display: 'flex', gap: 15, background: '#fff', padding: '8px', borderRadius: '24px', boxShadow: '0 15px 40px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.03)' }}>
-              <input 
+              <input
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSend()}
                 placeholder="Share what's on your mind..."
                 style={{ flex: 1, padding: '12px 20px', borderRadius: '20px', border: 'none', background: 'transparent', outline: 'none', fontSize: 15, color: '#1a1a1a' }}
               />
-              <button 
+              <button
                 onClick={handleSend}
                 disabled={loading}
                 style={{
                   width: 50, height: 50, borderRadius: '18px',
-                  background: loading ? '#dfe6e9' : 'linear-gradient(135deg, #a7bfff, #ffaecd)', 
+                  background: loading ? '#dfe6e9' : 'linear-gradient(135deg, #a7bfff, #ffaecd)',
                   color: '#fff', border: 'none',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer', transition: 'all 0.3s',
                   boxShadow: loading ? 'none' : '0 8px 20px rgba(167, 191, 255, 0.4)'
                 }}
               >
-                 <span style={{ fontSize: 20 }}>➤</span>
+                <span style={{ fontSize: 20 }}>➤</span>
               </button>
             </div>
           </div>

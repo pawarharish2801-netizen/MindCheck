@@ -13,7 +13,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8013/api/user-history/?user_uid=${currentUser.uid}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/user-history/?user_uid=${currentUser.uid}`);
         setHistory(response.data);
       } catch (err) {
         console.error("Failed to fetch history:", err);
@@ -45,9 +45,9 @@ export default function Profile() {
         boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid var(--border)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <img src={currentUser?.photoURL || 'https://ui-avatars.com/api/?name=' + currentUser?.displayName} 
-               alt="Profile" 
-               style={{ width: 80, height: 80, borderRadius: '50%', border: '4px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} 
+          <img src={currentUser?.photoURL || 'https://ui-avatars.com/api/?name=' + currentUser?.displayName}
+            alt="Profile"
+            style={{ width: 80, height: 80, borderRadius: '50%', border: '4px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
           />
           <div>
             <h1 className="heading-font" style={{ fontSize: 32, margin: 0 }}>{currentUser?.displayName}</h1>
@@ -59,7 +59,7 @@ export default function Profile() {
 
       {/* Stats and Charts */}
       <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 30, marginBottom: 40 }}>
-        
+
         {/* Trend Chart */}
         <div className="stat-card" style={{
           background: 'var(--card)', padding: 30, borderRadius: 24, gridColumn: 'span 2',
@@ -72,13 +72,13 @@ export default function Profile() {
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="var(--accent)" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="date" hide />
                   <YAxis hide domain={[0, 100]} />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
                     itemStyle={{ color: 'var(--accent)', fontWeight: 700 }}
                   />
@@ -86,9 +86,9 @@ export default function Profile() {
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-                <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)' }}>
-                  Take your first assessment to see your trend!
-                </div>
+              <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)' }}>
+                Take your first assessment to see your trend!
+              </div>
             )}
           </div>
         </div>
@@ -128,8 +128,8 @@ export default function Profile() {
                 <div style={{ fontSize: 12, color: 'var(--muted)' }}>{new Date(item.timestamp).toLocaleString()}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ 
-                  fontWeight: 800, fontSize: 18, 
+                <div style={{
+                  fontWeight: 800, fontSize: 18,
                   color: item.risk_tier === 'High Risk' ? 'var(--red)' : item.risk_tier === 'Moderate Risk' ? 'var(--orange)' : 'var(--green)'
                 }}>
                   {item.risk_score}%
