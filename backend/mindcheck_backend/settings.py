@@ -96,7 +96,7 @@ def get_sanitized_uri(raw_uri):
             pass
     return raw_uri
 
-MONGO_URI = get_sanitized_uri(env('MONGO_URI', default="mongodb+srv://mindcheck:mindcheck123@cluster0.p8dqj5r.mongodb.net/mindcheck?retryWrites=true&w=majority&appName=Cluster0"))
+MONGO_URI = get_sanitized_uri(env('MONGO_URI', default="mongodb+srv://mindcheck:1@cluster0.p8dqj5r.mongodb.net/mindcheck?retryWrites=true&w=majority&appName=Cluster0"))
 MONGO_DB  = env('MONGO_DB', default="mindcheck").strip()
 
 # ─────────────────────────────────────────
