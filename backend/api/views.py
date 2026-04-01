@@ -38,6 +38,11 @@ print("✅ All ML models loaded successfully")
 # ─────────────────────────────────────────
 # MONGODB CONNECTION
 # ─────────────────────────────────────────
+client = None
+db = None
+collection = None
+chat_collection = None
+
 try:
     client     = MongoClient(settings.MONGO_URI, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000)
     # Definitive startup diagnostic to confirm connection
@@ -48,7 +53,6 @@ try:
     chat_collection = db["chat_sessions_v2"] 
 except Exception as e:
     print(f"❌❌ MongoDB Connection FAILED: {e}")
-    client = None
 
 # ─────────────────────────────────────────
 # RISK TIER HELPER
