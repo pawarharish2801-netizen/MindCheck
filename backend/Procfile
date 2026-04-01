@@ -1,0 +1,1 @@
+web: gunicorn mindcheck_backend.wsgi:application
