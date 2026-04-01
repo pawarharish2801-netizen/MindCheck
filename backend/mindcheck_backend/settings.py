@@ -86,6 +86,7 @@ MONGO_DB  = env('MONGO_DB', default="mindcheck")
 # Google AI Studio / Gemini
 # ─────────────────────────────────────────
 GOOGLE_API_KEY = env('GOOGLE_API_KEY', default=None)
+GROQ_API_KEY  = env('GROQ_API_KEY', default=None)
 
 # ─────────────────────────────────────────
 # REST Framework

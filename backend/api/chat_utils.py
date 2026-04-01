@@ -85,7 +85,8 @@ def get_groq_response(messages, user_context=None, stream=True):
             return completion.choices[0].message.content
             
     except Exception as e:
-        print(f"Groq Request Final Error: {e}")
+        # Full technical error logged to Render console for debugging
+        print(f"CRITICAL AI ERROR: {str(e)}") 
         error_msg = "I'm having a bit of trouble connecting to my brain right now, but I'm still here for you. Could you try your message once more?"
         if stream: yield error_msg
         else: return error_msg
